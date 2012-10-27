@@ -34,7 +34,7 @@ $post_type_name = "dak_event";
 
 $myFile = "dak_events_post_type.php";
 $fh = fopen($myFile, 'w') or die("can't open file");
-fwrite($fh, "<?php");
+fwrite($fh, "<?php\n");
 fwrite($fh, "/*
 Plugin Name: DAK Event Post Type
 Description: Add penguins to your post!
@@ -43,7 +43,7 @@ Version: 0.0001
 */\n\n"
 );
 
-fwrite($fh, "\$post_type_name = {$post_type_name};");
+fwrite($fh, "\$post_type_name = \"{$post_type_name}\";\n\n");
 
 $add_action_method = <<<'EOD'
 // Set up hooks
@@ -51,6 +51,7 @@ add_action('init', 'dak_create_post_type');
 //add_action('add_meta_boxes', 'dak_add_meta_boxes');
 
 function dak_create_post_type() {
+    global $post_type_name;
     register_post_type(
         $post_type_name,
          array(
@@ -82,17 +83,19 @@ fwrite($fh, $add_action_method);
 
 $dak_add_metaboxes_method = <<<'EOD'
 /* Adds a box to the main column on the Post and Page edit screens */
-function dak_add_metaboxes() { 
+function dak_add_metaboxes() {
+
 EOD;
 
 
 foreach ($metaboxes as $metabox_id => $metabox_title) {
     
-    $add_meta_box_function = "add_meta_box( 
-            \"{$metabox_id}\",
-            __(\"{$metabox_title}\"), \"{$metabox_id}\",
-            \$post_type_name
-        );\n";
+    $add_meta_box_function = 
+    "   add_meta_box( 
+        \"{$metabox_id}\",
+        __(\"{$metabox_title}\"), \"{$metabox_id}\",
+        \$post_type_name
+    );\n";
     $dak_add_metaboxes_method.=$add_meta_box_function;
 
 }
@@ -108,7 +111,7 @@ foreach ($metaboxes as $metabox_id => $metabox_title) {
 $dak_write_metaboxes_method .= "function {$metabox_id}() {
     global \$post;
     \$meta = get_post_meta(\$post->ID, {$metabox_id}, true);
-    echo '<input type=\"text\" name=\"{$metabox_id}\" value=\"\{\$meta}\" />';
+    echo '<input type=\"text\" name=\"{$metabox_id}\" value=\"'.\$meta.'\" />';
    
 }\n\n";     
 
