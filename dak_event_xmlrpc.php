@@ -112,10 +112,11 @@ function dak_event_updateEvent($id) {
     } else {
         $meta_data_array = array(); # To be filled by something
 
-        #Dak event meta-fields
-        add_meta_to_post_array($eventData, $meta_data_array);
+        #Dak event meta-fields, remember that we need to prepend our namespace
+        # for each key we use from the source
+        add_meta_to_post_array($eventData, $meta_data_array, 'dak_event_');
 
-        foreach($post_to_insert as $key => $value) {
+        foreach($meta_data_array as $key => $value) {
             update_post_meta($post_id, $key, $value);
         }
     }
@@ -124,7 +125,7 @@ function dak_event_updateEvent($id) {
     //wp_set_object_terms($post_id, $categories, 'dak_event', true);
 }
 
-function add_meta_to_post_array($object, $array, $prepend='') {
+function add_meta_to_post_array($object, &$array, $prepend='') {
     foreach($object as $attrib => $value) {
         if(!is_object($value)) {
             $array[$prepend.$attrib] = $value;
