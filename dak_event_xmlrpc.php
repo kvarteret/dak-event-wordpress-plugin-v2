@@ -56,7 +56,7 @@ function dak_event_ping($args) {
     $arrangement = $args[3];
     $id = $args[4];
 
-    if($tarrangement == 'event') {
+    if($arrangement == 'event') {
         if($type == 'update') {
             dak_event_updateEvent($id);
         } else if($type == 'delete') {
@@ -82,7 +82,7 @@ function dak_event_updateEvent($id) {
         )
     );
     $post_to_insert = array();
-    $post_id;
+    $post_id = null;
     foreach($posts as $post) {
        $post_id = $post->id;
     }
