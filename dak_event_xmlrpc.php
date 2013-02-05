@@ -40,8 +40,10 @@ function dak_event_ping($args) {
     error_log("Running dak_event_ping");
     global $wp_xmlrpc_server;
     $wp_xmlrpc_server->escape( $args );
-    # xmlrp
-    
+
+    # xmlrpc-arguments
+    error_log(print_r($args, true));
+
     $username = $args[0];
     $password = $args[1];
 
@@ -72,6 +74,7 @@ function dak_event_updateEvent($id) {
     $client = new eventsCalendarClient($apiUrl, null, $cacheType);
     $response = $client->event($id);
     $eventData = $response->data[0];
+
     # Check if post already exist
     $posts = get_posts(
         array(
@@ -81,28 +84,42 @@ function dak_event_updateEvent($id) {
             'post_type' => 'dak_event' 
         )
     );
+
     $post_to_insert = array();
     $post_id = null;
+
     foreach($posts as $post) {
        $post_id = $post->id;
     }
+
     # Default wp post fields
-    $post_to_insert['ID'] = $post_id;
-    $post_to_insert['title'] = '';
-    $post_to_insert['content'] = '';
-    $post_to_insert['thumbnail'] = '';
-
-    $post_id = wp_insert_post($post_to_insert);
-
-    #Dak event meta-fields
-    $meta_data_array = array();
-    add_meta_to_post_array($eventData, $meta_data_array);
-
-    foreach($post_to_insert as $key => $value) {
-        update_post_meta($post_id, $key, $value);
+    if (!empty($post_id)) {
+        $post_to_insert['ID'] = $post_id;
     }
 
-    
+    # We must remember to provide post type
+    $post_to_insert['post_type'] = 'dak_event';
+    # We must provide title and/or content
+    $post_to_insert['post_title'] = $eventData->title;
+    $post_to_insert['post_content'] = $eventData->description;
+    $post_to_insert['thumbnail'] = '';
+
+    $post_id = wp_insert_post($post_to_insert, true);
+
+    if (is_wp_error($post_id)) {
+        error_log("eventdata:" . print_r($eventData, true));
+        error_log("post_id:" . $post_id->get_error_code() . " " . $post_id->get_error_message());
+    } else {
+        $meta_data_array = array(); # To be filled by something
+
+        #Dak event meta-fields
+        add_meta_to_post_array($eventData, $meta_data_array);
+
+        foreach($post_to_insert as $key => $value) {
+            update_post_meta($post_id, $key, $value);
+        }
+    }
+
     //$category_array = ();
     //wp_set_object_terms($post_id, $categories, 'dak_event', true);
 }
