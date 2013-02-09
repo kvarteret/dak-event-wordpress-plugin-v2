@@ -98,8 +98,14 @@ function dak_event_add_metaboxes() {
     );
 
     add_meta_box( 
-        "dak_event_common_location",
-        __("commonLocation"), "dak_event_common_location",
+        "dak_event_common_location_id",
+        __("commonLocation_id"), "dak_event_common_location_id",
+        $post_type_namespace
+    );
+
+    add_meta_box( 
+        "dak_event_common_location_name",
+        __("commonLocation_name"), "dak_event_common_location_name",
         $post_type_namespace
     );
 
@@ -187,7 +193,6 @@ function dak_event_add_metaboxes() {
         $post_type_namespace
     );
 }
-
 
 function dak_event_id() {
     global $post;
@@ -288,12 +293,21 @@ function dak_event_custom_location() {
    
 }
 
-function dak_event_common_location() {
+function dak_event_common_location_id() {
     global $post;
     $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_common_location', true);
+    $meta = get_post_meta($post->ID, 'dak_event_common_location_id', true);
     echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_common_location" value="'.$meta.'" />';
+    echo '<input type="text" name="dak_event_common_location_id" value="'.$meta.'" />';
+   
+}
+
+function dak_event_common_location_name() {
+    global $post;
+    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
+    $meta = get_post_meta($post->ID, 'dak_event_common_location_name', true);
+    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
+    echo '<input type="text" name="dak_event_common_location_name" value="'.$meta.'" />';
    
 }
 
@@ -423,21 +437,18 @@ function dak_event_festival() {
    
 }
 
-
 // Method hijacked from Devin @ http://wptheming.com/2010/08/custom-metabox-for-post-type/ 
 function dak_event_save_post_meta($post_id, $post) {
     // verify this came from the our screen and with proper authorization,
     // because save_post can be triggered at other times
-    
-    if (!empty($_POST['meta_noncename']) && !wp_verify_nonce( $_POST['meta_noncename'], plugin_basename(__FILE__) )) {
-        return $post->ID;
+    if ( !wp_verify_nonce( $_POST['meta_noncename'], plugin_basename(__FILE__) )) {
+    return $post->ID;
     }
     // Is the user allowed to edit the post or page?
     if ( !current_user_can( 'edit_post', $post->ID ))
         return $post->ID;
     // OK, we're authenticated: we need to find and save the data
     // We'll put it into an array to make it easier to loop though.
-    $dak_event_meta = array();
     if(!empty($_POST['dak_event_id'])) $dak_event_meta['dak_event_id'] = $_POST['dak_event_id'];
     if(!empty($_POST['dak_event_url'])) $dak_event_meta['dak_event_url'] = $_POST['dak_event_url'];
     if(!empty($_POST['dak_event_ical'])) $dak_event_meta['dak_event_ical'] = $_POST['dak_event_ical'];
@@ -449,7 +460,8 @@ function dak_event_save_post_meta($post_id, $post) {
     if(!empty($_POST['dak_event_is_accepted'])) $dak_event_meta['dak_event_is_accepted'] = $_POST['dak_event_is_accepted'];
     if(!empty($_POST['dak_event_is_public'])) $dak_event_meta['dak_event_is_public'] = $_POST['dak_event_is_public'];
     if(!empty($_POST['dak_event_custom_location'])) $dak_event_meta['dak_event_custom_location'] = $_POST['dak_event_custom_location'];
-    if(!empty($_POST['dak_event_common_location'])) $dak_event_meta['dak_event_common_location'] = $_POST['dak_event_common_location'];
+    if(!empty($_POST['dak_event_common_location_id'])) $dak_event_meta['dak_event_common_location_id'] = $_POST['dak_event_common_location_id'];
+    if(!empty($_POST['dak_event_common_location_name'])) $dak_event_meta['dak_event_common_location_name'] = $_POST['dak_event_common_location_name'];
     if(!empty($_POST['dak_event_location_id'])) $dak_event_meta['dak_event_location_id'] = $_POST['dak_event_location_id'];
     if(!empty($_POST['dak_event_arranger_id'])) $dak_event_meta['dak_event_arranger_id'] = $_POST['dak_event_arranger_id'];
     if(!empty($_POST['dak_event_arranger_name'])) $dak_event_meta['dak_event_arranger_name'] = $_POST['dak_event_arranger_name'];

@@ -74,6 +74,7 @@ function dak_event_updateEvent($id) {
     $client = new eventsCalendarClient($apiUrl, null, $cacheType);
     $response = $client->event($id);
     $eventData = $response->data[0];
+    error_log(print_r($eventData, true));
 
     # Check if post already exist
     $posts = get_posts(
@@ -114,7 +115,9 @@ function dak_event_updateEvent($id) {
 
         #Dak event meta-fields, remember that we need to prepend our namespace
         # for each key we use from the source
-        add_meta_to_post_array($eventData, $meta_data_array, 'dak_event_');
+        add_meta_to_post_array($eventData, $meta_data_array, 'dak_event');
+
+        error_log(print_r($meta_data_array, true));
 
         foreach($meta_data_array as $key => $value) {
             update_post_meta($post_id, $key, $value);
@@ -126,13 +129,17 @@ function dak_event_updateEvent($id) {
 }
 
 function add_meta_to_post_array($object, &$array, $prepend='') {
+    global $meta_names;
     foreach($object as $attrib => $value) {
-        if(!is_object($value)) {
-            $array[$prepend.$attrib] = $value;
-        } elseif (is_array($object)) {
+        error_log("Attrib name: ".$attrib);
+        if(is_object($value)) {
+            add_meta_to_post_array($value, $array, $prepend.'_'.$attrib);
+        } elseif (is_array($value)) {
             # Nothing to do here
         } else {
-            add_meta_to_post_array($value, $array, $attrib);
+            $meta_box_name = $meta_names[$prepend.'_'.$attrib];
+            error_log(print_r('meta box name of attrib '.$prepend.'_'.$attrib. ' and found: '.$meta_box_name, true));
+            $array['dak_event_'.$meta_box_name] = $value;
         }
     }
 }
