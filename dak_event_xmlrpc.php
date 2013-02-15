@@ -10,7 +10,7 @@ require_once('eventsCalendarClient.php');
 
     // Add method names here
 $dak_event_xmlrpc_methods = array( 'dak_event_ping' => 'dak_event_ping');
-$apiUrl = 'http://localhost:8888/kvarteret_symfony_events/web';
+$apiUrl = 'http://et.kvarteret.no/endre/kvarteret_symfony_events/web';
 $cacheType = 0;
 
 
@@ -82,7 +82,8 @@ function dak_event_updateEvent($id) {
             'meta_key' => 'dak_event_id',
             'meta_value' => $id,
             'meta_compare' => '==',
-            'post_type' => 'dak_event' 
+            'post_type' => 'dak_event',
+            'post_status' => 'any', // this is important if you deal with drafted and public posts
         )
     );
 
@@ -90,7 +91,7 @@ function dak_event_updateEvent($id) {
     $post_id = null;
 
     foreach($posts as $post) {
-       $post_id = $post->id;
+       $post_id = $post->ID;
     }
 
     # Default wp post fields
