@@ -40,6 +40,7 @@ $meta_names = array(
 # Import plugin php modules
 require_once('dak_event_post_type.php');
 require_once('dak_event_xmlrpc.php');
+require_once('dak_event_admin.php');
 //require_once('dak_event_register_taxonomy.php');
 
 # Set up hooks
@@ -51,5 +52,9 @@ add_action('init', 'dak_event_create_post_type');
 //add_action('init', 'dak_event_register_taxonomy');
 add_action('save_post', 'dak_event_save_post_meta', 1, 2);
 
+if (is_admin()) {
+    add_action('admin_menu', 'dak_event_admin_add_settings_page');
+    add_action('admin_init', 'dak_event_admin_init');
+}
 
 ?>

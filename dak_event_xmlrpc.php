@@ -10,7 +10,6 @@ require_once('eventsCalendarClient.php');
 
     // Add method names here
 $dak_event_xmlrpc_methods = array( 'dak_event_ping' => 'dak_event_ping');
-$apiUrl = 'http://et.kvarteret.no/endre/kvarteret_symfony_events/web';
 $cacheType = 0;
 
 
@@ -68,13 +67,14 @@ function dak_event_ping($args) {
 }
 
 function dak_event_updateEvent($id) {
+    global $cacheType;
 
-    global $apiUrl, $cacheType;
+    $settings = get_option('dak_event_settings');
+    $apiUrl = $settings['server_url'];
 
     $client = new eventsCalendarClient($apiUrl, null, $cacheType);
     $response = $client->event($id);
     $eventData = $response->data[0];
-    error_log(print_r($eventData, true));
 
     # Check if post already exist
     $posts = get_posts(
@@ -104,6 +104,7 @@ function dak_event_updateEvent($id) {
     # We must provide title and/or content
     $post_to_insert['post_title'] = $eventData->title;
     $post_to_insert['post_content'] = $eventData->description;
+    $post_to_insert['post_excerpt'] = $eventData->leadParagraph;
     $post_to_insert['thumbnail'] = '';
 
     $post_id = wp_insert_post($post_to_insert, true);
