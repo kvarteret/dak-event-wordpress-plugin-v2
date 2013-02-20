@@ -76,26 +76,14 @@ function dak_event_updateEvent($id) {
     $response = $client->event($id);
     $eventData = $response->data[0];
 
-    # Check if post already exist
-    $posts = get_posts(
-        array(
-            'meta_key' => 'dak_event_id',
-            'meta_value' => $id,
-            'meta_compare' => '==',
-            'post_type' => 'dak_event',
-            'post_status' => 'any', // this is important if you deal with drafted and public posts
-        )
-    );
-
     $post_to_insert = array();
-    $post_id = null;
 
-    foreach($posts as $post) {
-       $post_id = $post->ID;
-    }
+    # Check if post already exist
+    $post_id = dak_event_findPostIdOfEvent($id);
 
     # Default wp post fields
     if (!empty($post_id)) {
+        # Our wp post already exists
         $post_to_insert['ID'] = $post_id;
     }
 
@@ -150,5 +138,24 @@ function dak_event_deleteEvent($id) {
 
 }
 
+function dak_event_findPostIdOfEvent($id) {
+    # Check if post already exist
+    $posts = get_posts(
+        array(
+            'meta_key' => 'dak_event_id',
+            'meta_value' => $id,
+            'meta_compare' => '==',
+            'post_type' => 'dak_event',
+            'post_status' => 'any', // this is important if you deal with drafted and public posts
+        )
+    );
+
+    $post_id = null;
+	if (!empty($posts)) {
+		$post_id = $posts[0]->ID;
+	}
+
+	return $post_id;
+}
 
 ?>
