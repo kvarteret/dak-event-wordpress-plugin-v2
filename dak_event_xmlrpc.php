@@ -135,7 +135,11 @@ function add_meta_to_post_array($object, &$array, $prepend='') {
 }
 
 function dak_event_deleteEvent($id) {
+    $post_id = dak_event_findPostIdOfEvent($id);
 
+    if (!empty($post_id)) {
+        wp_delete_post($post_id);
+    }
 }
 
 function dak_event_findPostIdOfEvent($id) {
