@@ -66,16 +66,19 @@ function dak_event_ping($args) {
     }
 }
 
-function dak_event_updateEvent($id) {
+function dak_event_updateEvent($id, $payload = null) {
     global $cacheType;
 
     $settings = get_option('dak_event_settings');
     $apiUrl = $settings['server_url'];
 
-    $client = new eventsCalendarClient($apiUrl, null, $cacheType);
-    $response = $client->event($id);
-    $eventData = $response->data[0];
+    $eventData = $payload;
 
+    if (empty($eventData)) {
+        $client = new eventsCalendarClient($apiUrl, null, $cacheType);
+        $response = $client->event($id);
+        $eventData = $response->data[0];
+    }
     $post_to_insert = array();
 
     # Check if post already exist
@@ -127,9 +130,11 @@ function add_meta_to_post_array($object, &$array, $prepend='') {
         } elseif (is_array($value)) {
             # Nothing to do here
         } else {
-            $meta_box_name = $meta_names[$prepend.'_'.$attrib];
-            error_log(print_r('meta box name of attrib '.$prepend.'_'.$attrib. ' and found: '.$meta_box_name, true));
-            $array['dak_event_'.$meta_box_name] = $value;
+            if (isset($meta_names[$prepend . '_' . $attrib])) {
+                $meta_box_name = $meta_names[$prepend.'_'.$attrib];
+                error_log(print_r('meta box name of attrib '.$prepend.'_'.$attrib. ' and found: '.$meta_box_name, true));
+                $array['dak_event_'.$meta_box_name] = $value;
+            }
         }
     }
 }
@@ -155,11 +160,66 @@ function dak_event_findPostIdOfEvent($id) {
     );
 
     $post_id = null;
-	if (!empty($posts)) {
-		$post_id = $posts[0]->ID;
-	}
+    if (!empty($posts)) {
+        $post_id = $posts[0]->ID;
+    }
 
-	return $post_id;
+    return $post_id;
+}
+
+/**
+ * Will purge the database of all events
+ */
+function dak_event_purgeEvents() {
+    $limit = 20;
+    $queryArgs = array(
+        'posts_per_page' => $limit,
+        'post_type' => 'dak_event',
+        'post_status' => 'any', // this is important if you deal with drafted and public posts
+    );
+
+
+    $posts = get_posts($queryArgs);
+    
+    foreach($posts as $post) {
+        error_log(sprintf("will delete post %d", $post->ID));
+        wp_delete_post($post->ID, true);
+    }
+
+    return array(
+        'count' => count($posts),
+        'limit' => $limit
+    );
+}
+
+/**
+ * Will import events from event database
+ */
+function dak_event_importEvents($offset = 0, $limit = 10) {
+    global $cacheType;
+
+    $settings = get_option('dak_event_settings');
+    $apiUrl = $settings['server_url'];
+
+    $client = new eventsCalendarClient($apiUrl, null, $cacheType);
+
+    $queryArgs = array(
+        'noCurrentEvents' => 1,
+        'limit' => $limit,
+        'offset' => $offset
+    );
+    $events = $client->filteredEventsList($queryArgs);
+
+    foreach ($events->data as $event) {
+        dak_event_updateEvent($event->id, $event);
+    }
+
+    return array(
+        'offset' => $events->offset,
+        'count' => $events->count,
+        'limit' => $events->limit,
+        'totalCount' => $events->totalCount
+    );
 }
 
 ?>
