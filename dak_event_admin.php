@@ -13,26 +13,26 @@ function dak_event_admin_add_settings_page() {
 function dak_event_admin_init() {
 	//add_action('admin_menu', 'dak_event_admin_add_settings_page');
 	register_setting(
-		'dak_event_settings',
-		'dak_event_settings',
-		'dak_event_settings_validate'
+		'dak_event_settings', // Option group
+		'dak_event_settings', // option name
+		'dak_event_settings_validate' // sanitizer/validator function
 	);
 	add_settings_section(
-		'dak_event_settings_main',
-		'DAK Event Settings',
-		'dak_event_section_text',
-		'dak_event_admin'
+		'dak_event_settings_main', // id
+		'DAK Event Settings', // title
+		'dak_event_section_settings_text', // Function that fills the section with the desired content
+		'dak_event_admin' // Which page these settings belong to?
 	);
 	add_settings_field(
-		'server_url',
-		'URL to event server',
-		'dak_event_server_url',
-		'dak_event_admin', 
-		'dak_event_settings_main'
+		'server_url', // id
+		'URL to event server', // title
+		'dak_event_server_url', // callback function that deals with content
+		'dak_event_admin', // page
+		'dak_event_settings_main' // which section do this field belong to?
 	);
 }
 
-function dak_event_section_text() {
+function dak_event_section_settings_text() {
 	echo '<p>DAK Event Settings</p>';
 }
 
@@ -59,13 +59,13 @@ function dak_event_server_url() {
 		$server_url = $settings['server_url'];
 	}
 
-	echo '<input id="dak_event_server_url" type="text" name="dak_event_settings[server_url]" value="' . $server_url . '" />';
+	echo '<input id="dak_event_server_url" type="text" size="60" name="dak_event_settings[server_url]" value="' . $server_url . '" />';
 }
 
 function dak_event_settings_validate($input) {
-	$new_input = array();
-	
-	$new_input['server_url'] = esc_url_raw($input['server_url']);
+    $new_input = array();
 
-	return $new_input;
+    $new_input['server_url'] = esc_url_raw($input['server_url']);
+
+    return $new_input;
 }
