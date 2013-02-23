@@ -96,6 +96,7 @@ function dak_event_updateEvent($id, $payload = null) {
     $post_to_insert['post_title'] = $eventData->title;
     $post_to_insert['post_content'] = $eventData->description;
     $post_to_insert['post_excerpt'] = $eventData->leadParagraph;
+    $post_to_insert['post_status'] = 'publish';
     $post_to_insert['thumbnail'] = '';
 
     $post_id = wp_insert_post($post_to_insert, true);
