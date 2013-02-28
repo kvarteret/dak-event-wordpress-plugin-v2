@@ -58,4 +58,16 @@ if (is_admin()) {
     add_action('admin_init', 'dak_event_admin_init');
 }
 
-?>
+function dak_event_activate() {
+	dak_event_create_post_type();
+
+	// Remeber to refresh url rewriting rules when activating and deactivating a plugin
+	flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'dak_event_activate');
+
+function dak_event_deactivate() {
+	// Remeber to refresh url rewriting rules when activating and deactivating a plugin
+	flush_rewrite_rules();
+}
+register_deactivation_hook(__FILE__, 'dak_event_deactivate');
