@@ -146,8 +146,14 @@ function dak_event_add_metaboxes() {
     );
 
     add_meta_box( 
-        "dak_event_primary_picture",
-        __("primaryPicture"), "dak_event_primary_picture",
+        "dak_event_primary_picture_url",
+        __("primaryPicture url"), "dak_event_primary_picture_url",
+        $post_type_namespace
+    );
+
+	add_meta_box(
+        "dak_event_primary_picture_description",
+        __("primaryPicture description"), "dak_event_primary_picture_description",
         $post_type_namespace
     );
 
@@ -365,12 +371,20 @@ function dak_event_festival_id() {
    
 }
 
-function dak_event_primary_picture() {
+function dak_event_primary_picture_url() {
     global $post;
     $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_primary_picture', true);
+    $meta = get_post_meta($post->ID, 'dak_event_primary_picture_url', true);
     echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_primary_picture" value="'.$meta.'" />';
+    echo '<input type="text" name="dak_event_primary_picture_url" value="'.$meta.'" />';
+}
+
+function dak_event_primary_picture_description() {
+    global $post;
+    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
+    $meta = get_post_meta($post->ID, 'dak_event_primary_picture_description', true);
+    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
+    echo '<input type="text" name="dak_event_primary_picture_description" value="'.$meta.'" />';
    
 }
 
