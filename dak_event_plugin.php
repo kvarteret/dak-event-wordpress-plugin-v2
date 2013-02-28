@@ -40,6 +40,7 @@ $meta_names = array(
 
 # Import plugin php modules
 require_once('dak_event_post_type.php');
+require_once('dak_event_attachment.php');
 require_once('dak_event_xmlrpc.php');
 require_once('dak_event_admin.php');
 //require_once('dak_event_register_taxonomy.php');
