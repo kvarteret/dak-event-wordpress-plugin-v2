@@ -88,10 +88,15 @@ function dak_event_delete_attachment($url) {
  * This way it gets easier to search for images used by the Event system
  * and also delete them. It will try to search for images used multiple times.
  *
- * @param image_object an object containing at least a url field and a description field
+ * @param object image_object an object containing at least a url field and a description field
+ * @param int max_image_size Maximum allowed file size of an image
  * @returns id|WP_Error id on success
  */
-function dak_event_get_image($image_object) {
+function dak_event_get_image($image_object, $max_image_size=0) {
+	if ($max_image_size <= 0) {
+		$max_image_size = 2*1024*1024;
+	}
+
 	$attachments = get_posts(
 		array(
 			'post_type' => 'attachment',
@@ -104,7 +109,7 @@ function dak_event_get_image($image_object) {
 	error_log(print_r($attachments, true));
 
 	if (empty($attachments)) {
-		$id = dak_media_sideload_image($image_object->url, null, $image_object->description);
+		$id = dak_media_sideload_image($image_object->url, null, $image_object->description, $max_image_size);
 		if (is_wp_error($id)) {
 			return $id;
 		}
@@ -125,9 +130,14 @@ function dak_event_get_image($image_object) {
  * @param string $file The URL of the image to download
  * @param int $post_id The post ID the media is to be associated with
  * @param string $desc Optional. Description of the image
+ * @param int max_image_size Maximum allowed file size of an image
  * @return id|WP_Error id on success
  */
-function dak_media_sideload_image($file, $post_id, $desc = null) {
+function dak_media_sideload_image($file, $post_id, $desc = null, $max_image_size = 0) {
+	if ($max_image_size <= 0) {
+		$max_image_size = 2*1024*1024;
+	}
+
 	if ( ! empty($file) ) {
 		// Download file to temp location
 		$tmp = download_url( $file );
@@ -142,6 +152,11 @@ function dak_media_sideload_image($file, $post_id, $desc = null) {
 		if ( is_wp_error( $tmp ) ) {
 			@unlink($file_array['tmp_name']);
 			$file_array['tmp_name'] = '';
+		}
+
+		if (filesize($file_array['tmp_name']) > $max_image_size) {
+			unlink($file_array['tmp_name']);
+			return new WP_Error('image_too_big', 'Image file size is too big');
 		}
 
 		// do the validation and storage stuff
