@@ -106,7 +106,9 @@ function dak_event_ajax_importEvents() {
 
     $endTime = timer_stop();
     $retVal['runtime'] = $endTime - $startTime;
-    ob_clean(); // Remove previous outputs, ie. error messages
+    if (ob_get_length() > 0) {
+		ob_clean(); // Remove previous outputs, ie. error messages
+	}
     echo json_encode($retVal);
 
     die(); // this is required to return a proper result
@@ -114,8 +116,10 @@ function dak_event_ajax_importEvents() {
 
 function dak_event_ajax_purgeEvents() {
     error_log("elapsed time bf: " . timer_stop());
-    
-    ob_clean(); // Remove previous outputs, ie. error messages
+
+	if (ob_get_length() > 0) {
+	    ob_clean(); // Remove previous outputs, ie. error messages
+	}
     echo json_encode(dak_event_purgeEvents());
     
     error_log("elapsed time af: " . timer_stop());
