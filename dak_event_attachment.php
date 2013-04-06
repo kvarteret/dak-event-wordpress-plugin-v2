@@ -11,6 +11,9 @@ add_action( 'add_meta_boxes', 'dak_event_attachment_meta_boxes');
 add_action( 'add_attachment', 'dak_event_save_attachment');
 add_action( 'edit_attachment', 'dak_event_save_attachment');
 
+$max_image_size_temp = 1.25 * 1024 * 1024;
+define('DAK_MAX_IMAGE_SIZE', $max_image_size_temp);
+
 function dak_event_attachment_meta_boxes() {
 	add_meta_box(
 		'dak_event_image_source',
@@ -94,7 +97,7 @@ function dak_event_delete_attachment($url) {
  */
 function dak_event_get_image($image_object, $max_image_size=0) {
 	if ($max_image_size <= 0) {
-		$max_image_size = 2*1024*1024;
+		$max_image_size = DAK_MAX_IMAGE_SIZE;
 	}
 
 	$attachments = get_posts(
@@ -135,7 +138,7 @@ function dak_event_get_image($image_object, $max_image_size=0) {
  */
 function dak_media_sideload_image($file, $post_id, $desc = null, $max_image_size = 0) {
 	if ($max_image_size <= 0) {
-		$max_image_size = 2*1024*1024;
+		$max_image_size = DAK_MAX_IMAGE_SIZE;
 	}
 
 	if ( ! empty($file) ) {
