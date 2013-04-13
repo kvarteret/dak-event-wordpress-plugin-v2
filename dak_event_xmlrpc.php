@@ -124,10 +124,14 @@ function dak_event_updateEvent($id, $payload = null) {
         foreach($meta_data_array as $key => $value) {
             update_post_meta($post_id, $key, $value);
         }
-    }
 
-    //$category_array = ();
-    //wp_set_object_terms($post_id, $categories, 'dak_event', true);
+        // Set event categories
+        $categories = array();
+        foreach ($eventData->categories as $category) {
+            $categories[] = $category->name;
+        }
+        wp_set_post_terms($post_id, $categories, 'dak_event_category');
+    }
 }
 
 function add_meta_to_post_array($object, &$array, $prepend='') {
