@@ -25,6 +25,8 @@ function dak_event_create_post_type() {
             'register_meta_box_cb' => 'dak_event_add_metaboxes'
         )
     );
+
+	register_taxonomy('dak_event_category', $post_type_namespace);
 }
 
 /* Adds a box to the main column on the Post and Page edit screens */
