@@ -142,6 +142,19 @@ function dak_media_sideload_image($file, $post_id, $desc = null, $max_image_size
 	}
 
 	if ( ! empty($file) ) {
+		// We will ask the file's webserver for the size of the file
+		// in order to not download it if it is too large
+		$fileHeader = wp_remote_head($file);
+
+		if (is_wp_error($fileHeader)) {
+			error_log($fileHeader->get_error_code() . ' ' . $fileHeader->get_error_message());
+		}
+
+		if (!empty($fileHeader['headers']['content-length']) &&
+			(intval($fileHeader['headers']['content-length']) > $max_image_size)) {
+			return new WP_Error('image_too_big', 'Image file size is too big');
+		}
+
 		// Download file to temp location
 		$tmp = download_url( $file );
 
