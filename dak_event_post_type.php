@@ -33,424 +33,174 @@ function dak_event_create_post_type() {
 function dak_event_add_metaboxes() { 
     global $post_type_namespace;
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_id",
-        __("id"), "dak_event_id",
+        __("id"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
+        "dak_event_provider",
+        __("provider"), "dak_event_text_box",
+        $post_type_namespace
+    );
+
+    add_meta_box(
         "dak_event_url",
-        __("url"), "dak_event_url",
+        __("url"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_ical",
-        __("ical"), "dak_event_ical",
+        __("ical"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_linkout",
-        __("linkout"), "dak_event_linkout",
+        __("linkout"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_start_date",
-        __("startDate"), "dak_event_start_date",
+        __("startDate"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_start_time",
-        __("startTime"), "dak_event_start_time",
+        __("startTime"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_end_date",
-        __("endDate"), "dak_event_end_date",
+        __("endDate"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_end_time",
-        __("endTime"), "dak_event_end_time",
+        __("endTime"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
-        "dak_event_is_accepted",
-        __("is_accepted"), "dak_event_is_accepted",
-        $post_type_namespace
-    );
-
-    add_meta_box( 
-        "dak_event_is_public",
-        __("is_visible"), "dak_event_is_public",
-        $post_type_namespace
-    );
-
-    add_meta_box( 
+    add_meta_box(
         "dak_event_custom_location",
-        __("customLocation"), "dak_event_custom_location",
+        __("customLocation"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_common_location_id",
-        __("commonLocation_id"), "dak_event_common_location_id",
+        __("commonLocation_id"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_common_location_name",
-        __("commonLocation_name"), "dak_event_common_location_name",
+        __("commonLocation_name"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_location_id",
-        __("location_id"), "dak_event_location_id",
+        __("location_id"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_arranger_id",
-        __("arranger_id"), "dak_event_arranger_id",
+        __("arranger_id"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_arranger_name",
-        __("arranger_name"), "dak_event_arranger_name",
+        __("arranger_name"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_arranger_logo",
-        __("arranger_logo"), "dak_event_arranger_logo",
+        __("arranger_logo"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_arranger_description",
-        __("arranger_description"), "dak_event_arranger_description",
+        __("arranger_description"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_festival_id",
-        __("festival_id"), "dak_event_festival_id",
+        __("festival_id"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_primary_picture_url",
-        __("primaryPicture url"), "dak_event_primary_picture_url",
+        __("primaryPicture url"), "dak_event_text_box",
         $post_type_namespace
     );
 
-	add_meta_box(
+    add_meta_box(
         "dak_event_primary_picture_description",
-        __("primaryPicture description"), "dak_event_primary_picture_description",
+        __("primaryPicture description"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_covercharge",
-        __("covercharge"), "dak_event_covercharge",
+        __("covercharge"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_age_limit",
-        __("age_limit"), "dak_event_age_limit",
+        __("age_limit"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_created_at",
-        __("created_at"), "dak_event_created_at",
+        __("created_at"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_updated_at",
-        __("updated_at"), "dak_event_updated_at",
+        __("updated_at"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_arranger",
-        __("arranger"), "dak_event_arranger",
+        __("arranger"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_categories",
-        __("categories"), "dak_event_categories",
+        __("categories"), "dak_event_text_box",
         $post_type_namespace
     );
 
-    add_meta_box( 
+    add_meta_box(
         "dak_event_festival",
-        __("festival"), "dak_event_festival",
+        __("festival"), "dak_event_text_box",
         $post_type_namespace
     );
 }
 
-function dak_event_id() {
-    global $post;
+function dak_event_text_box($post, $metabox) {
     $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_id', true);
+    $meta = get_post_meta($post->ID, $metabox['id'], true);
     echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_id" value="'.$meta.'" />';
-   
-}
-
-function dak_event_url() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_url', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_url" value="'.$meta.'" />';
-   
-}
-
-function dak_event_ical() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_ical', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_ical" value="'.$meta.'" />';
-   
-}
-
-function dak_event_linkout() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_linkout', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_linkout" value="'.$meta.'" />';
-   
-}
-
-function dak_event_start_date() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_start_date', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_start_date" value="'.$meta.'" />';
-   
-}
-
-function dak_event_start_time() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_start_time', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_start_time" value="'.$meta.'" />';
-   
-}
-
-function dak_event_end_date() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_end_date', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_end_date" value="'.$meta.'" />';
-   
-}
-
-function dak_event_end_time() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_end_time', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_end_time" value="'.$meta.'" />';
-   
-}
-
-function dak_event_is_accepted() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_is_accepted', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_is_accepted" value="'.$meta.'" />';
-   
-}
-
-function dak_event_is_public() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_is_public', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_is_public" value="'.$meta.'" />';
-   
-}
-
-function dak_event_custom_location() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_custom_location', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_custom_location" value="'.$meta.'" />';
-   
-}
-
-function dak_event_common_location_id() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_common_location_id', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_common_location_id" value="'.$meta.'" />';
-   
-}
-
-function dak_event_common_location_name() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_common_location_name', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_common_location_name" value="'.$meta.'" />';
-   
-}
-
-function dak_event_location_id() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_location_id', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_location_id" value="'.$meta.'" />';
-   
-}
-
-function dak_event_arranger_id() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_arranger_id', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_arranger_id" value="'.$meta.'" />';
-   
-}
-
-function dak_event_arranger_name() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_arranger_name', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_arranger_name" value="'.$meta.'" />';
-   
-}
-
-function dak_event_arranger_logo() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_arranger_logo', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_arranger_logo" value="'.$meta.'" />';
-   
-}
-
-function dak_event_arranger_description() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_arranger_description', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_arranger_description" value="'.$meta.'" />';
-   
-}
-
-function dak_event_festival_id() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_festival_id', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_festival_id" value="'.$meta.'" />';
-   
-}
-
-function dak_event_primary_picture_url() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_primary_picture_url', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_primary_picture_url" value="'.$meta.'" />';
-}
-
-function dak_event_primary_picture_description() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_primary_picture_description', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_primary_picture_description" value="'.$meta.'" />';
-   
-}
-
-function dak_event_covercharge() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_covercharge', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_covercharge" value="'.$meta.'" />';
-   
-}
-
-function dak_event_age_limit() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_age_limit', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_age_limit" value="'.$meta.'" />';
-   
-}
-
-function dak_event_created_at() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_created_at', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_created_at" value="'.$meta.'" />';
-   
-}
-
-function dak_event_updated_at() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_updated_at', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_updated_at" value="'.$meta.'" />';
-   
-}
-
-function dak_event_arranger() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_arranger', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_arranger" value="'.$meta.'" />';
-   
-}
-
-function dak_event_categories() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_categories', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_categories" value="'.$meta.'" />';
-   
-}
-
-function dak_event_festival() {
-    global $post;
-    $nonce = wp_create_nonce( plugin_basename(__FILE__) );
-    $meta = get_post_meta($post->ID, 'dak_event_festival', true);
-    echo '<input type="hidden" name="meta_noncename" value="'.$nonce.'" />';
-    echo '<input type="text" name="dak_event_festival" value="'.$meta.'" />';
-   
+    echo '<input type="text" name="' . $metabox['id'] . '" value="'.$meta.'" />';
 }
 
 // Method hijacked from Devin @ http://wptheming.com/2010/08/custom-metabox-for-post-type/ 
