@@ -14,9 +14,9 @@ function dak_event_admin_init() {
         'dak_event_admin' // Which page these settings belong to?
     );
     add_settings_field(
-        'server_url', // id
-        'URL to event server', // title
-        'dak_event_server_url', // callback function that deals with content
+        'providers', // id
+        'List of providers', // title
+        'dak_event_providers', // callback function that deals with content
         'dak_event_admin', // page
         'dak_event_settings_main' // which section do this field belong to?
     );
@@ -65,24 +65,109 @@ function dak_event_admin_page() {
 <?php
 }
 
-function dak_event_server_url() {
+function dak_event_providers() {
     $settings = get_option('dak_event_settings');
     error_log(print_r($settings, true));
 
-    $server_url = '';
-    if (!empty($settings['server_url'])) {
-        $server_url = $settings['server_url'];
+    $providers = array();
+    if (!empty($settings['providers'])) {
+        $providers = $settings['providers'];
     }
 
-    echo '<input id="dak_event_server_url" type="text" size="60" name="dak_event_settings[server_url]" value="' . $server_url . '" />';
+    foreach ($providers as $nick => $provider) {
+        ?>
+        <div>
+          <h4><?php echo $nick ?></h4>
+          <label>Service url:
+            <input type="text" size="60"
+              name="dak_event_settings[providers][<?php echo $nick ?>][server_url]"
+              value="<?php echo $provider['server_url'] ?>" />
+          </label>
+          <br />
+          Service type: <select name="dak_event_settings[providers][<?php echo $nick ?>][client_type]">
+            <option value="">Select a provider</option>
+            <?php
+            foreach ($GLOBALS['dak_event_provider_types'] as $class_name => $pretty_name) {
+                $selected = '';
+                if ($provider['client_type'] == $class_name) {
+                    $selected = 'selected="selected"';
+                }
+                echo "<option ${selected} value=\"${class_name}\">${pretty_name}</option>\n";
+            }
+            ?>
+          </select>
+          <br />
+          <label>Delete?
+            <input type="checkbox"
+              name="dak_event_settings[providers][<?php echo $nick ?>][delete]" value="true" />
+          </label>
+        </div>
+        <?php
+    }
+
+    ?>
+    <div>
+      <h4>New provider:</h4>
+      <label>Nick:
+        <input type="text" size="10" name="dak_event_settings[new_provider][nick]" />
+      </label>
+      <br />
+      <label>Service url:
+        <input type="text" size="60" name="dak_event_settings[new_provider][server_url]" />
+      </label>
+      <br />
+      Service type: <select name="dak_event_settings[new_provider][client_type]">
+        <option value="">Select a provider</option>
+        <?php
+        foreach ($GLOBALS['dak_event_provider_types'] as $class_name => $pretty_name) {
+            echo "<option value=\"${class_name}\">${pretty_name}</option>\n";
+        }
+        ?>
+      </select>
+    </div>
+    <?php
+
 }
 
 function dak_event_settings_validate($input) {
-    $new_input = array();
+    $old_settings = get_option('dak_event_settings');
+    $settings = array(
+        'providers' => array(),
+    );
 
-    $new_input['server_url'] = esc_url_raw($input['server_url']);
+    // Validate existing providers
+    foreach ($input['providers'] as $nick => $provider) {
+        if (!empty($old_settings[$nick]) && $provider['delete'] !== "true") {
+             if (empty($GLOBALS['dak_event_provider_types'][$provider['client_type']])) {
+                 continue;
+             }
 
-    return $new_input;
+             $settings['providers'][$nick] = array(
+                 'server_url' => esc_url_raw($provider['server_url'], array('http', 'https')),
+                 'client_type' => $provider['client_type'],
+             );
+        }
+    }
+
+    // Validate a possible new provider
+    if (!empty($input['new_provider']['nick']) && !empty($input['new_provider']['server_url'])) {
+        if (empty($GLOBALS['dak_event_provider_types'][$input['new_provider']['client_type']])) {
+            continue;
+        }
+
+        $provider = array(
+             'server_url' => esc_url_raw($input['new_provider']['server_url']),
+             'client_type' => $input['new_provider']['client_type'],
+        );
+
+        $safe_nick = sanitize_key($input['new_provider']['nick']);
+
+        if (!empty($safe_nick) && empty($settings['providers'][$safe_nick])) {
+            $settings['providers'][$safe_nick] = $provider;
+        }
+    }
+
+    return $settings;
 }
 
 /** AJAX-stuff **/

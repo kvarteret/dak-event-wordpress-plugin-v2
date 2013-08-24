@@ -9,6 +9,7 @@ $post_type_namespace = "dak_event";
 
 $meta_names = array(
         "dak_event_id" => "id",
+	"dak_event_provider" => "provider",
         "dak_event_url" => "url",
         "dak_event_ical" => "ical",
         "dak_event_linkout" => "linkout",
@@ -47,6 +48,12 @@ require_once(__DIR__ . '/dak_event_admin.php');
 
 # Set up hooks
 error_log("Setting up plugin");
+
+$dak_event_provider_types = array(
+    // 'className' => 'Class Name'
+    'eventsCalendarClient' => 'DAK Events Calendar Client',
+    'linticketCalendarClient' => 'LinTicket Calendar Client'
+);
 
 // Adding xml-rpc methods
 add_filter( 'xmlrpc_methods', 'dak_event_add_xmlrpc_methods');
