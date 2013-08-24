@@ -1,6 +1,8 @@
 <?php
 
-class eventsCalendarClient {
+require_once(__DIR__ . '/calendarClient.php');
+
+class eventsCalendarClient implements calendarClient {
 
 	/**
 	 * Holds url of event server
@@ -38,7 +40,7 @@ class eventsCalendarClient {
 
 	private $getContentMethod;
 
-	public function __construct ($url, $apiKey = null, $enableCache = self::CACHE_APC, $cacheTime = 5) {
+	public function __construct ($url, $apiKey = null, $enableCache = self::CACHE_NONE, $cacheTime = 5) {
 		$this->url = strval($url) . '/api/json/';
 		$this->apiKey = $apiKey;
 		$this->cacheTime = intval($cacheTime);
@@ -348,14 +350,14 @@ class eventsCalendarClient {
 	 * @param array $args Array of arguments to pass on to backend.
 	 * @return array
 	 */
-	public function filteredEventsList (array $args, $fetchAll = false) {
+	public function eventsList (array $filter, $fetchAll = false) {
 		if ($fetchAll) {
 			$finalResult = new stdClass;
 
 			$args['limit'] = 100;
 			$args['offset'] = 0;
 
-			$result = $this->getData('filteredEvents', $args);
+			$result = $this->getData('filteredEvents', $filter);
 			$finalResult->data = $result->data;
 
 			$totalCount = intval($result->count);
@@ -378,7 +380,7 @@ class eventsCalendarClient {
 
 			return $finalResult;
 		} else {
-			return $this->getData('filteredEvents' , $args );
+			return $this->getData('filteredEvents' , $filter );
 		}
 	}
 	
