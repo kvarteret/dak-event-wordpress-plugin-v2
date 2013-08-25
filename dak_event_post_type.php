@@ -215,6 +215,9 @@ function dak_event_save_post_meta($post_id, $post) {
         return $post->ID;
     // OK, we're authenticated: we need to find and save the data
     // We'll put it into an array to make it easier to loop though.
+
+    $dak_event_meta = array();
+
     if(!empty($_POST['dak_event_id'])) $dak_event_meta['dak_event_id'] = $_POST['dak_event_id'];
     if(!empty($_POST['dak_event_url'])) $dak_event_meta['dak_event_url'] = $_POST['dak_event_url'];
     if(!empty($_POST['dak_event_ical'])) $dak_event_meta['dak_event_ical'] = $_POST['dak_event_ical'];
