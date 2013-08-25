@@ -185,8 +185,10 @@ function dak_event_ajax_importEvents() {
         'runtime' => 0.0
     );
 
+    $provider = $_POST['provider'];
+
     if (isset($_POST['offset'])) {
-        $retVal = dak_event_importEvents(intval($_POST['offset']), 10);
+        $retVal = dak_event_importEvents($provider, intval($_POST['offset']), 20);
     }
 
     $endTime = timer_stop();
@@ -202,10 +204,12 @@ function dak_event_ajax_importEvents() {
 function dak_event_ajax_purgeEvents() {
     error_log("elapsed time bf: " . timer_stop());
 
+    $provider = $_POST['provider'];
+
 	if (ob_get_length() > 0) {
 	    ob_clean(); // Remove previous outputs, ie. error messages
 	}
-    echo json_encode(dak_event_purgeEvents());
+    echo json_encode(dak_event_purgeEvents($provider));
     
     error_log("elapsed time af: " . timer_stop());
     die();
