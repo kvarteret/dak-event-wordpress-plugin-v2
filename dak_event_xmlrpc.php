@@ -68,23 +68,23 @@ function dak_event_ping($args) {
     }
 }
 
-function dak_event_updateEvent($id, $payload = null) {
-    global $cacheType;
-
+function dak_event_updateEvent($id, $provider, $payload = null) {
     $settings = get_option('dak_event_settings');
-    $apiUrl = $settings['server_url'];
+
+    $apiUrl = $settings['providers'][$provider]['server_url'];
+    $class = $settings['providers'][$provider]['client_type'];
 
     $eventData = $payload;
 
     if (empty($eventData)) {
-        $client = new eventsCalendarClient($apiUrl, null, $cacheType);
+        $client = new $class($apiUrl);
         $response = $client->event($id);
         $eventData = $response->data[0];
     }
     $post_to_insert = array();
 
     # Check if post already exist
-    $post_id = dak_event_findPostIdOfEvent($id);
+    $post_id = dak_event_findPostIdOfEvent($id, $provider);
 
     # Default wp post fields
     if (!empty($post_id)) {
@@ -102,6 +102,7 @@ function dak_event_updateEvent($id, $payload = null) {
 
     $post_id = wp_insert_post($post_to_insert, true);
 
+    /*
     if (!is_wp_error($post_id) && $eventData->primaryPicture != null) {
         $attachment_id = dak_event_get_image($eventData->primaryPicture);
         if (is_wp_error($attachment_id)) {
@@ -110,12 +111,14 @@ function dak_event_updateEvent($id, $payload = null) {
             set_post_thumbnail($post_id, $attachment_id);
         }
     }
+    */
 
     if (is_wp_error($post_id)) {
         error_log("eventdata:" . print_r($eventData, true));
         error_log("post_id:" . $post_id->get_error_code() . " " . $post_id->get_error_message());
     } else {
         $meta_data_array = array(); # To be filled by something
+        $meta_data_array['dak_event_provider'] = $provider;
 
         #Dak event meta-fields, remember that we need to prepend our namespace
         # for each key we use from the source
@@ -154,8 +157,8 @@ function add_meta_to_post_array($object, &$array, $prepend='') {
     }
 }
 
-function dak_event_deleteEvent($id) {
-    $post_id = dak_event_findPostIdOfEvent($id);
+function dak_event_deleteEvent($id, $provider) {
+    $post_id = dak_event_findPostIdOfEvent($id, $provider);
 
     if (!empty($post_id)) {
         if (has_post_thumbnail($post_id)) {
@@ -166,17 +169,22 @@ function dak_event_deleteEvent($id) {
     }
 }
 
-function dak_event_findPostIdOfEvent($id) {
+function dak_event_findPostIdOfEvent($id, $provider) {
     # Check if post already exist
-    $posts = get_posts(
-        array(
-            'meta_key' => 'dak_event_id',
-            'meta_value' => $id,
-            'meta_compare' => '==',
-            'post_type' => 'dak_event',
-            'post_status' => 'any', // this is important if you deal with drafted and public posts
+    $posts = get_posts(array(
+        'post_type' => 'dak_event',
+        'post_status' => 'any', // this is important if you deal with drafted and public posts
+        'meta_query' => array(
+            array(
+                 'key' => 'dak_event_id',
+                 'value' => $id,
+            ),
+            array(
+                 'key' => 'dak_event_provider',
+                 'value' => $provider,
+            )
         )
-    );
+    ));
 
     $post_id = null;
     if (!empty($posts)) {
@@ -190,11 +198,17 @@ function dak_event_findPostIdOfEvent($id) {
  * Will purge the database of all events, must be called multiple times,
  * or you can call it with $limit = -1 to remove all posts at once
  */
-function dak_event_purgeEvents($limit = 20) {
+function dak_event_purgeEvents($provider, $limit = 20) {
     $queryArgs = array(
         'posts_per_page' => $limit,
         'post_type' => 'dak_event',
         'post_status' => 'any', // this is important if you deal with drafted and public posts
+        'meta_query' => array(
+            array(
+                'key' => 'dak_event_provider',
+                'value' => $provider
+            )
+        )
     );
 
 
@@ -219,23 +233,24 @@ function dak_event_purgeEvents($limit = 20) {
 /**
  * Will import events from event database
  */
-function dak_event_importEvents($offset = 0, $limit = 10) {
+function dak_event_importEvents($provider, $offset = 0, $limit = 10) {
     global $cacheType;
 
     $settings = get_option('dak_event_settings');
-    $apiUrl = $settings['server_url'];
+    $apiUrl = $settings['providers'][$provider]['server_url'];
+    $class = $settings['providers'][$provider]['client_type'];
 
-    $client = new eventsCalendarClient($apiUrl, null, $cacheType);
+    $client = new $class($apiUrl);
 
     $queryArgs = array(
         'noCurrentEvents' => 1,
         'limit' => $limit,
         'offset' => $offset
     );
-    $events = $client->filteredEventsList($queryArgs);
+    $events = $client->eventsList($queryArgs);
 
     foreach ($events->data as $event) {
-        dak_event_updateEvent($event->id, $event);
+        dak_event_updateEvent($event->id, $provider, $event);
     }
 
     return array(
