@@ -54,15 +54,16 @@ function dak_event_ping($args) {
      *  Functionality if authenticated and authorized:
      */
 
-    $type = $args[2];
-    $arrangement = $args[3];
-    $id = $args[4];
+    $provider = $args[2];
+    $type = $args[3];
+    $arrangement = $args[4];
+    $id = $args[5];
 
     if($arrangement == 'event') {
         if($type == 'update') {
-            dak_event_updateEvent($id);
+            dak_event_updateEvent($id, $provider);
         } else if($type == 'delete') {
-            dak_event_deleteEvent($id);
+            dak_event_deleteEvent($id, $provider);
         }
     }
 }
