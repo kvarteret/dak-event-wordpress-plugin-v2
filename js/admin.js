@@ -1,13 +1,16 @@
 function dak_event_import_poller() {
+	var button = jQuery(this);
+
 	var data = {
 		action: 'dak_event_import',
-		offset: 0
+		offset: 0,
+		provider: button.data('provider')
 	};
 
 	var poller = function(response) {
 		data.offset = response.offset + response.count;
 		console.log("import partial runtime: " + response.runtime);
-		jQuery('#dak_event_import .msg').text(data.offset + '/' + response.totalCount);
+		button.find('.msg').text(data.offset + '/' + response.totalCount);
 
 		if (data.offset < response.totalCount) {
 			jQuery.post(ajaxurl, data, poller, "json");
@@ -18,16 +21,19 @@ function dak_event_import_poller() {
 }
 
 function dak_event_purge_poller(response) {
+	var button = jQuery(this);
+
 	var data = {
-		action: 'dak_event_purge'
+		action: 'dak_event_purge',
+		provider: button.data('provider')
 	};
 
 	var count = 0;
-	jQuery('#dak_event_purge .msg').text(count);
+	button.find('.msg').text(count);
 
 	var poller = function(response) {
 		count += response.count;
-		jQuery('#dak_event_purge .msg').text(count);
+		button.find('.msg').text(count);
 
 		if (response.count == response.limit) {
 			// We will only delete a certain amount at a time
@@ -41,6 +47,6 @@ function dak_event_purge_poller(response) {
 }
 
 jQuery(document).ready(function($) {
-	$('#dak_event_import').on('click', dak_event_import_poller);
-	$('#dak_event_purge').on('click', dak_event_purge_poller);
+	$('button.dak_event_import').on('click', dak_event_import_poller);
+	$('button.dak_event_purge').on('click', dak_event_purge_poller);
 });

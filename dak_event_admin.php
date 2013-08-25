@@ -51,16 +51,6 @@ function dak_event_admin_page() {
 
     <?php submit_button(); ?>
   </form>
-  <p>
-    <button type="button" class="button button-secondary" id="dak_event_purge">
-      Purge
-      <span class="msg"></span>
-    </button>
-    <button type="button" class="button button-secondary" id="dak_event_import">
-      Import
-      <span class="msg"></span>
-    </button>
-  </p>
 </div>
 <?php
 }
@@ -101,6 +91,17 @@ function dak_event_providers() {
             <input type="checkbox"
               name="dak_event_settings[providers][<?php echo $nick ?>][delete]" value="true" />
           </label>
+
+          <p>
+            <button type="button" class="button button-secondary dak_event_purge" data-provider="<?php echo $nick ?>">
+              Purge
+              <span class="msg"></span>
+            </button>
+            <button type="button" class="button button-secondary dak_event_import" data-provider="<?php echo $nick ?>">
+              Import
+              <span class="msg"></span>
+            </button>
+          </p>
         </div>
         <?php
     }
