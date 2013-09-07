@@ -7,10 +7,14 @@ function dak_event_import_poller() {
 		provider: button.data('provider')
 	};
 
+	var totalCount = 0;
+
 	var poller = function(response) {
-		data.offset = response.offset + response.count;
+		data.offset = response.offset + response.limit;
+		totalCount += response.count;
+
 		console.log("import partial runtime: " + response.runtime);
-		button.find('.msg').text(data.offset + '/' + response.totalCount);
+		button.find('.msg').text(totalCount);
 
 		if (data.offset < response.totalCount) {
 			jQuery.post(ajaxurl, data, poller, "json");

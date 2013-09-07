@@ -2,7 +2,7 @@
 
 require_once(__DIR__ . '/calendarClient.php');
 
-class eventsCalendarClient implements calendarClient {
+class eventsCalendarClient extends calendarClient {
 
 	/**
 	 * Holds url of event server
@@ -37,8 +37,6 @@ class eventsCalendarClient implements calendarClient {
 	static private $keyCollection = null;
 	static private $keyCollectionChanged = false;
 	static private $keyCollectionInstances = 0;
-
-	private $getContentMethod;
 
 	public function __construct ($url, $apiKey = null, $enableCache = self::CACHE_NONE, $cacheTime = 5) {
 		$this->url = strval($url) . '/api/json/';
@@ -168,33 +166,6 @@ class eventsCalendarClient implements calendarClient {
 		self::$keyCollection = array();
 
 		$this->saveCacheKeyCollection();
-	}
-
-	public function getContent ($url) {
-		if ($this->getContentMethod == 'curl') {
-			//Initialize the Curl session
-			$ch = curl_init();
-			//Set curl to return the data instead of printing it to the browser.
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-			// Do not verify SSL-certificate, use with care.
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-			//Set the URL
-			curl_setopt($ch, CURLOPT_URL, $url);
-
-			//Execute the fetch
-			$data = curl_exec($ch);
-
-			//Close the connection
-			curl_close($ch);
-
-			return $data;
-		} else if ($this->getContentMethod == 'file_get_contents') {
-			return file_get_contents($url);
-		} else {
-			return false;
-		}
 	}
 
 	/**
@@ -350,38 +321,16 @@ class eventsCalendarClient implements calendarClient {
 	 * @param array $args Array of arguments to pass on to backend.
 	 * @return array
 	 */
-	public function eventsList (array $filter, $fetchAll = false) {
-		if ($fetchAll) {
-			$finalResult = new stdClass;
-
-			$args['limit'] = 100;
-			$args['offset'] = 0;
-
-			$result = $this->getData('filteredEvents', $filter);
-			$finalResult->data = $result->data;
-
-			$totalCount = intval($result->count);
-
-			while ( ($args['offset'] + $result->limit) < $result->totalCount ) {
-				$args['offset'] += $result->limit;
-
-				$result = $this->getData('filteredEvents' , $args );
-				$finalResult->data = array_merge($finalResult->data, $result->data);
-				
-				$totalCount += $result->count;
-			}
-
-			unset($result);
-
-			$finalResult->count = $totalCount;
-			$finalResult->totalCount = $totalCount;
-			$finalResult->limit = $totalCount;
-			$finalResult->offset = 0;
-
-			return $finalResult;
-		} else {
-			return $this->getData('filteredEvents' , $filter );
+	public function eventList (array $filter, $limit = 100, $offset = 0) {
+		if (empty($filter['limit'])) {
+			$filter['limit'] = $limit;
 		}
+
+		if (empty($filter['offset'])) {
+			$filter['offset'] = $offset;
+		}
+
+		return $this->getData('filteredEvents' , $filter );
 	}
 	
 	/**
@@ -409,7 +358,13 @@ class eventsCalendarClient implements calendarClient {
 	 */
 	public function event($id, array $args = array()) {
 		$args['id'] = intval($id);
-		return $this->getData('event/get', $args);
+		$data = $this->getData('event/get', $args);
+
+		if ($data->count > 0) {
+			return $data->data[0];
+		} else {
+			return array();
+		}
 	}
 
 	/**
@@ -421,6 +376,61 @@ class eventsCalendarClient implements calendarClient {
 	public function festival($id, array $args = array()) {
 		$args['id'] = intval($id);
 		return $this->getData('festival/get', $args);
+	}
+
+	public function translate($eventObject) {
+		$metaNames = array(
+			"dak_event_id" => "id",
+			"dak_event_provider" => "provider",
+
+			"dak_event_title" => "title", // not to be stored as actual meta data
+			"dak_event_leadParaph" => "lead_paragraph", // not to be stored as actual meta data
+			"dak_event_description" => "description", // not to be stored as actual meta data
+
+			"dak_event_url" => "url",
+			"dak_event_ical" => "ical",
+			"dak_event_linkout" => "linkout",
+			"dak_event_startDate" => "start_date",
+			"dak_event_startTime" => "start_time",
+			"dak_event_endDate" => "end_date",
+			"dak_event_endTime" => "end_time",
+			"dak_event_is_accepted" => "is_accepted",
+			"dak_event_is_public" => "is_public",
+			"dak_event_customLocation" => "custom_location",
+			"dak_event_commonLocation_id" => "common_location_id",
+			"dak_event_commonLocation_name" => "common_location_name",
+			"dak_event_location_id" => "location_id",
+			"dak_event_arranger_id" => "arranger_id",
+			"dak_event_arranger_name" => "arranger_name",
+			"dak_event_arranger_logo" => "arranger_logo",
+			"dak_event_arranger_description" => "arranger_description",
+			"dak_event_festival_id" => "festival_id",
+			"dak_event_primaryPicture_url" => "primary_picture_url",
+			"dak_event_primaryPicture_desc" => "primary_picture_desc",
+			"dak_event_covercharge" => "covercharge",
+			"dak_event_age_limit" => "age_limit",
+			"dak_event_created_at" => "created_at",
+			"dak_event_updated_at" => "updated_at",
+			"dak_event_arranger" => "arranger",
+			"dak_event_categories" => "categories",
+			"dak_event_festival" => "festival",
+		);
+
+		$metaData = array();
+
+		$this->addMetaToPostArray($metaNames, $eventObject, $metaData, 'dak_event');
+
+		return $metaData;
+	}
+
+	public function extractCategories($eventObject) {
+		$categories = array();		
+
+		foreach ($eventObject->categories as $category) {
+			$categories[] = $category->name;
+		}
+
+		return $categories;
 	}
 }
 

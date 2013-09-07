@@ -95,7 +95,7 @@ function dak_event_delete_attachment($url) {
  * @param int max_image_size Maximum allowed file size of an image
  * @returns id|WP_Error id on success
  */
-function dak_event_get_image($image_object, $max_image_size=0) {
+function dak_event_get_image($image_url, $desc = null, $max_image_size=0) {
 	if ($max_image_size <= 0) {
 		$max_image_size = DAK_MAX_IMAGE_SIZE;
 	}
@@ -105,19 +105,19 @@ function dak_event_get_image($image_object, $max_image_size=0) {
 			'post_type' => 'attachment',
 			'post_status' => 'any',
 			'meta_key' => 'dak_event_image_source',
-			'meta_value' => $image_object->url
+			'meta_value' => $image_url
 		)
 	);
 
 	error_log(print_r($attachments, true));
 
 	if (empty($attachments)) {
-		$id = dak_media_sideload_image($image_object->url, null, $image_object->description, $max_image_size);
+		$id = dak_media_sideload_image($image_url, null, $desc, $max_image_size);
 		if (is_wp_error($id)) {
 			return $id;
 		}
 
-		update_post_meta($id, 'dak_event_image_source', $image_object->url);
+		update_post_meta($id, 'dak_event_image_source', $image_url);
 		return $id;
 	} else {
 		return $attachments[0]->ID;

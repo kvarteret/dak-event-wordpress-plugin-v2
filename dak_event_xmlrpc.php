@@ -76,10 +76,10 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
 
     $eventData = $payload;
 
+    $client = new $class($apiUrl);
+
     if (empty($eventData)) {
-        $client = new $class($apiUrl);
         $response = $client->event($id);
-        $eventData = $response->data[0];
     }
     $post_to_insert = array();
 
@@ -92,37 +92,27 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
         $post_to_insert['ID'] = $post_id;
     }
 
+    $meta_data_array = $client->translate($eventData);
+
     # We must remember to provide post type
     $post_to_insert['post_type'] = 'dak_event';
     # We must provide title and/or content
-    $post_to_insert['post_title'] = $eventData->title;
-    $post_to_insert['post_content'] = $eventData->description;
-    $post_to_insert['post_excerpt'] = $eventData->leadParagraph;
+    $post_to_insert['post_title'] = $meta_data_array['dak_event_title'];
+    $post_to_insert['post_content'] = $meta_data_array['dak_event_description'];
+    $post_to_insert['post_excerpt'] = $meta_data_array['dak_event_lead_paragraph'];
     $post_to_insert['post_status'] = 'publish';
 
     $post_id = wp_insert_post($post_to_insert, true);
-
-    /*
-    if (!is_wp_error($post_id) && $eventData->primaryPicture != null) {
-        $attachment_id = dak_event_get_image($eventData->primaryPicture);
-        if (is_wp_error($attachment_id)) {
-            error_log($attachment_id->get_error_message());
-        } else {
-            set_post_thumbnail($post_id, $attachment_id);
-        }
-    }
-    */
 
     if (is_wp_error($post_id)) {
         error_log("eventdata:" . print_r($eventData, true));
         error_log("post_id:" . $post_id->get_error_code() . " " . $post_id->get_error_message());
     } else {
-        $meta_data_array = array(); # To be filled by something
+
         $meta_data_array['dak_event_provider'] = $provider;
 
         #Dak event meta-fields, remember that we need to prepend our namespace
         # for each key we use from the source
-        add_meta_to_post_array($eventData, $meta_data_array, 'dak_event');
 
         error_log(print_r($meta_data_array, true));
 
@@ -131,29 +121,27 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
         }
 
         // Set event categories
-        $categories = array();
-        foreach ($eventData->categories as $category) {
-            $categories[] = $category->name;
-        }
-        wp_set_post_terms($post_id, $categories, 'dak_event_category');
-    }
-}
+        $categories = $client->extractCategories($eventData);
 
-function add_meta_to_post_array($object, &$array, $prepend='') {
-    global $meta_names;
-    foreach($object as $attrib => $value) {
-        //error_log("Attrib name: ".$attrib);
-        if(is_object($value)) {
-            add_meta_to_post_array($value, $array, $prepend.'_'.$attrib);
-        } elseif (is_array($value)) {
-            # Nothing to do here
-        } else {
-            if (isset($meta_names[$prepend . '_' . $attrib])) {
-                $meta_box_name = $meta_names[$prepend.'_'.$attrib];
-                //error_log(print_r('meta box name of attrib '.$prepend.'_'.$attrib. ' and found: '.$meta_box_name, true));
-                $array['dak_event_'.$meta_box_name] = $value;
+        wp_set_post_terms($post_id, $categories, 'dak_event_category');
+
+
+        if (!empty($meta_data_array['dak_event_primary_picture_url'])) {
+            error_log("Will insert picture");
+
+            $attachment_id = dak_event_get_image(
+                $meta_data_array['dak_event_primary_picture_url'],
+                (!empty($meta_data_array['dak_event_primary_picture_description']) ? $meta_data_array['dak_event_primary_picture_description'] : null)
+            );
+
+
+            if (is_wp_error($attachment_id)) {
+                error_log($attachment_id->get_error_message());
+            } else {
+                set_post_thumbnail($post_id, $attachment_id);
             }
         }
+
     }
 }
 
@@ -243,14 +231,13 @@ function dak_event_importEvents($provider, $offset = 0, $limit = 10) {
     $client = new $class($apiUrl);
 
     $queryArgs = array(
-        'noCurrentEvents' => 1,
-        'limit' => $limit,
-        'offset' => $offset
+        'noCurrentEvents' => 1
     );
-    $events = $client->eventsList($queryArgs);
+    $events = $client->eventList($queryArgs, $limit, $offset);
 
     foreach ($events->data as $event) {
-        dak_event_updateEvent($event->id, $provider, $event);
+        $meta = $client->translate($event);
+        dak_event_updateEvent($meta['dak_event_id'], $provider, $event);
     }
 
     return array(

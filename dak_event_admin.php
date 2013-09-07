@@ -137,24 +137,23 @@ function dak_event_settings_validate($input) {
     );
 
     // Validate existing providers
-    foreach ($input['providers'] as $nick => $provider) {
-        if (!empty($old_settings[$nick]) && $provider['delete'] !== "true") {
-             if (empty($GLOBALS['dak_event_provider_types'][$provider['client_type']])) {
-                 continue;
-             }
+    if (isset($input['providers'])) {
+        foreach ($input['providers'] as $nick => $provider) {
+            if (!empty($old_settings['providers'][$nick]) && !isset($provider['delete']) &&
+                     isset($GLOBALS['dak_event_provider_types'][$provider['client_type']])) {
 
-             $settings['providers'][$nick] = array(
-                 'server_url' => esc_url_raw($provider['server_url'], array('http', 'https')),
-                 'client_type' => $provider['client_type'],
-             );
+                $settings['providers'][$nick] = array(
+                    'server_url' => esc_url_raw($provider['server_url'], array('http', 'https')),
+                    'client_type' => $provider['client_type'],
+                );
+            }
         }
     }
 
     // Validate a possible new provider
-    if (!empty($input['new_provider']['nick']) && !empty($input['new_provider']['server_url'])) {
-        if (empty($GLOBALS['dak_event_provider_types'][$input['new_provider']['client_type']])) {
-            continue;
-        }
+    if (!empty($input['new_provider']['nick']) &&
+            !empty($input['new_provider']['server_url']) &&
+            isset($GLOBALS['dak_event_provider_types'][$input['new_provider']['client_type']])) {
 
         $provider = array(
              'server_url' => esc_url_raw($input['new_provider']['server_url']),
@@ -167,6 +166,8 @@ function dak_event_settings_validate($input) {
             $settings['providers'][$safe_nick] = $provider;
         }
     }
+
+    error_log("new settings:" . print_r($settings, true));
 
     return $settings;
 }
