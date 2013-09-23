@@ -384,7 +384,7 @@ class eventsCalendarClient extends calendarClient {
 			"dak_event_provider" => "provider",
 
 			"dak_event_title" => "title", // not to be stored as actual meta data
-			"dak_event_leadParaph" => "lead_paragraph", // not to be stored as actual meta data
+			"dak_event_leadParagraph" => "lead_paragraph", // not to be stored as actual meta data
 			"dak_event_description" => "description", // not to be stored as actual meta data
 
 			"dak_event_url" => "url",
