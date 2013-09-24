@@ -39,16 +39,12 @@ class eventsCalendarClient extends calendarClient {
 	static private $keyCollectionInstances = 0;
 
 	public function __construct ($url, $apiKey = null, $enableCache = self::CACHE_NONE, $cacheTime = 5) {
+		parent::__construct();
+
 		$this->url = strval($url) . '/api/json/';
 		$this->apiKey = $apiKey;
 		$this->cacheTime = intval($cacheTime);
 		$this->enableCache = intval($enableCache);
-
-		if (function_exists('curl_init')) {
-			$this->getContentMethod = 'curl';
-		} else {
-			$this->getContentMethod = 'file_get_contents';
-		}
 
 		self::$keyCollectionInstances++;
 	}

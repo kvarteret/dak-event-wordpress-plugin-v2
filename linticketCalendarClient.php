@@ -10,13 +10,8 @@ class linticketCalendarClient extends calendarClient {
 	private $url;
 
 	public function __construct ($url) {
+		parent::__construct();
 		$this->url = $url;
-
-		if (function_exists('curl_init')) {
-			$this->getContentMethod = 'curl';
-		} else {
-			$this->getContentMethod = 'file_get_contents';
-		}
 	}
 
 	/**

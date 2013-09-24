@@ -4,6 +4,14 @@ abstract class calendarClient {
 
 	protected $getContentMethod;
 
+	protected function __construct() {
+		if (function_exists('curl_init')) {
+			$this->getContentMethod = 'curl';
+		} else {
+			$this->getContentMethod = 'file_get_contents';
+		}
+	}
+
 	/**
 	 * Return list of filtered events
 	 * @param array $args Array of arguments to pass on to backend.
