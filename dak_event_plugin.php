@@ -47,3 +47,12 @@ function dak_event_deactivate() {
 	flush_rewrite_rules();
 }
 register_deactivation_hook(__FILE__, 'dak_event_deactivate');
+
+function dak_api_init() {
+    global $dakevent_api_event;
+
+	// TODO: Check if WP-API is activated, if not install github.com/rmccure/WP-API
+    require_once (__DIR__ . '/api/DakEvent_API_Event.php');
+    $dakevent_api_event = new DakEvent_API_Event();
+}
+add_action( 'plugins_loaded', 'dak_api_init' );
