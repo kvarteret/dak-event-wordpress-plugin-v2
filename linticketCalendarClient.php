@@ -130,9 +130,9 @@ class linticketCalendarClient extends calendarClient {
 			"linticket_link" => "url",
 			//"linticket_ical" => "ical",
 
-			"linticket_navn" => "title",
-			"linticket_teaser" => "lead_paragraph",
-			"linticket_tekst" => "description",
+			"linticket_navn" => "title", // not to be stored as actual meta data
+			"linticket_teaser" => "lead_paragraph", // not to be stored as actual meta data
+			"linticket_tekst" => "description", // not to be stored as actual meta data
 
 			"linticket_dato" => "start_date",
 			"linticket_starttid" => "start_time",
@@ -153,6 +153,11 @@ class linticketCalendarClient extends calendarClient {
 		$metaData = array();
 
 		$this->addMetaToPostArray($metaNames, $eventObject, $metaData, 'linticket');
+
+		if (!isset($metaData['dak_event_covercharge'])) {
+			$metaData['dak_event_covercharge'] = "";
+		}
+
 
 		return $metaData;
 	}
