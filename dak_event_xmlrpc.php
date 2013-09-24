@@ -96,10 +96,10 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
 
     # We must remember to provide post type
     $post_to_insert['post_type'] = 'dak_event';
-    # We must provide title and/or content
-    $post_to_insert['post_title'] = $meta_data_array['dak_event_title'];
-    $post_to_insert['post_content'] = $meta_data_array['dak_event_description'];
-    $post_to_insert['post_excerpt'] = $meta_data_array['dak_event_lead_paragraph'];
+    # We must provide title and content/excerpt
+    $post_to_insert['post_title'] = wp_strip_all_tags($meta_data_array['dak_event_title']);
+    $post_to_insert['post_content'] = wp_kses_post($meta_data_array['dak_event_description']);
+    $post_to_insert['post_excerpt'] = wp_kses_post($meta_data_array['dak_event_lead_paragraph']);
     $post_to_insert['post_status'] = 'publish';
 
     $post_id = wp_insert_post($post_to_insert, true);
