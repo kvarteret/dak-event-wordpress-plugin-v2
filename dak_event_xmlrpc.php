@@ -69,6 +69,8 @@ function dak_event_ping($args) {
 }
 
 function dak_event_updateEvent($id, $provider, $payload = null) {
+	global $dak_event_storage_fields;
+
     $settings = get_option('dak_event_settings');
 
     $apiUrl = $settings['providers'][$provider]['server_url'];
@@ -116,9 +118,11 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
 
         error_log(print_r($meta_data_array, true));
 
-        foreach($meta_data_array as $key => $value) {
-            update_post_meta($post_id, $key, $value);
-        }
+		foreach($meta_data_array as $key => $value) {
+			if (isset($dak_event_storage_fields[$key])) {
+				update_post_meta($post_id, $key, $value);
+			}
+		}
 
         // Set event categories
         $categories = $client->extractCategories($eventData);
