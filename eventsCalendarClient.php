@@ -386,30 +386,34 @@ class eventsCalendarClient extends calendarClient {
 			"dak_event_url" => "url",
 			"dak_event_ical" => "ical",
 			"dak_event_linkout" => "linkout",
+
 			"dak_event_startDate" => "start_date",
 			"dak_event_startTime" => "start_time",
 			"dak_event_endDate" => "end_date",
 			"dak_event_endTime" => "end_time",
-			"dak_event_is_accepted" => "is_accepted",
-			"dak_event_is_public" => "is_public",
+
 			"dak_event_customLocation" => "custom_location",
 			"dak_event_commonLocation_id" => "common_location_id",
 			"dak_event_commonLocation_name" => "common_location_name",
-			"dak_event_location_id" => "location_id",
+
 			"dak_event_arranger_id" => "arranger_id",
 			"dak_event_arranger_name" => "arranger_name",
 			"dak_event_arranger_logo" => "arranger_logo",
 			"dak_event_arranger_description" => "arranger_description",
-			"dak_event_festival_id" => "festival_id",
+
 			"dak_event_primaryPicture_url" => "primary_picture_url",
 			"dak_event_primaryPicture_desc" => "primary_picture_desc",
+
 			"dak_event_covercharge" => "covercharge",
 			"dak_event_age_limit" => "age_limit",
+			
+			"dak_event_categories" => "categories",
+
+			"dak_event_festival" => "festival",
+			"dak_event_festival_id" => "festival_id",
+			
 			"dak_event_created_at" => "created_at",
 			"dak_event_updated_at" => "updated_at",
-			"dak_event_arranger" => "arranger",
-			"dak_event_categories" => "categories",
-			"dak_event_festival" => "festival",
 		);
 
 		$metaData = array();
