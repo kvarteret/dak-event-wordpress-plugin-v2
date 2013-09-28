@@ -26,7 +26,6 @@ $dak_event_provider_types = array(
 // Adding xml-rpc methods
 add_filter( 'xmlrpc_methods', 'dak_event_add_xmlrpc_methods');
 add_action('init', 'dak_event_create_post_type');
-//add_action('init', 'dak_event_register_taxonomy');
 add_action('save_post', 'dak_event_save_post_meta', 1, 2);
 
 if (is_admin()) {
@@ -48,11 +47,23 @@ function dak_event_deactivate() {
 }
 register_deactivation_hook(__FILE__, 'dak_event_deactivate');
 
-function dak_api_init() {
-    global $dakevent_api_event;
+function dak_event_api_init() {
+	global $dakevent_api_event;
 
 	// TODO: Check if WP-API is activated, if not install github.com/rmccure/WP-API
-    require_once (__DIR__ . '/api/DakEvent_API_Event.php');
-    $dakevent_api_event = new DakEvent_API_Event();
+	if (class_exists("WP_JSON_CustomPostType")) {
+		require_once (__DIR__ . '/api/DakEvent_API_Event.php');
+		$dakevent_api_event = new DakEvent_API_Event();
+	} else {
+		add_action('admin_notices', 'dak_event_missing_requirement');
+	}
 }
-add_action( 'plugins_loaded', 'dak_api_init' );
+add_action( 'plugins_loaded', 'dak_event_api_init' );
+
+function dak_event_missing_requirement() {
+	echo "<div class=\"error\">";
+	
+	echo "Kvarteret Event Post Type requires <a href=\"github.com/rmccue/WP-API\">WP-API</a>";
+
+	echo "</div>";
+}
