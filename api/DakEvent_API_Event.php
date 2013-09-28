@@ -1,75 +1,75 @@
 <?php
 
 class DakEvent_API_Event extends WP_JSON_CustomPostType {
-    protected $base = '/dakevent/events';
-    protected $type = 'dak_event';
+	protected $base = '/dakevent/events';
+	protected $type = 'dak_event';
 
 	/**
 	 * @override
 	 */
-    public function registerRoutes( $routes ) {
-        //$routes = parent::registerRoutes( $routes );
-        // $routes = parent::registerRevisionRoutes( $routes );
-        // $routes = parent::registerCommentRoutes( $routes );
+	public function registerRoutes( $routes ) {
+		//$routes = parent::registerRoutes( $routes );
+		// $routes = parent::registerRevisionRoutes( $routes );
+		// $routes = parent::registerCommentRoutes( $routes );
 
-        // Add more custom routes here
+		// Add more custom routes here
 
 		$routes[$this->base] = array(
 			array(array($this, 'getPosts'), WP_JSON_Server::READABLE)
 		);
-    	$routes[$this->base . '/(?P<id>\d+)'] = array(
+		$routes[$this->base . '/(?P<id>\d+)'] = array(
 			array(array($this, 'getPost'), WP_JSON_Server::READABLE)
 		);
 
-        return $routes;
-    }
+		return $routes;
+	}
 
 	/**
 	 * @override
 	 */
-    public function getPosts($filter = array(), $context = 'view', $type = null, $page = 1) {
-        $posts = parent::getPosts( $filter, $context, $this->type, $page );
+	public function getPosts($filter = array(), $context = 'view', $type = null, $page = 1) {
+		$posts = parent::getPosts( $filter, $context, $this->type, $page );
 
-        // do remapping;
-        $mappedPosts = array();
-        foreach ($posts as $eventObject) {
+		// do remapping;
+		$mappedPosts = array();
+		foreach ($posts as $eventObject) {
 			$eventObject['post_meta'] = dak_event_convert_data($eventObject['post_meta']);
-            $mappedPosts[] = $this->remapEvent($eventObject);
-        }
+			$mappedPosts[] = $this->remapEvent($eventObject);
+		}
 
-        return $mappedPosts;
-    }
+		return $mappedPosts;
+	}
 
 	/**
 	 * @override
 	 */
-    public function getPost($id, $context = 'view') {
-        $event = parent::getPost( $id, $context );
+	public function getPost($id, $context = 'view') {
+		$event = parent::getPost( $id, $context );
 
 		$event['post_meta'] = dak_event_convert_data($event['post_meta']);
-        $event = $this->remapEvent($event);
+		$event = $this->remapEvent($event);
 
-        return $event;
-    }
+		return $event;
+	}
 
-    public function remapEvent($eventObject) {
-        $remapped = array();
+	public function remapEvent($eventObject) {
+		$remapped = array();
 
-        $remapped['ID'] = $eventObject['ID'];
-        $remapped['title'] = $eventObject['title'];
-        $remapped['excerpt'] = $eventObject['excerpt'];
-        $remapped['content'] = $eventObject['content'];
+		$remapped['ID'] = $eventObject['ID'];
+		$remapped['title'] = $eventObject['title'];
+		$remapped['excerpt'] = $eventObject['excerpt'];
+		$remapped['content'] = $eventObject['content'];
 
-        foreach ($eventObject['post_meta'] as $meta) {
+		foreach ($eventObject['post_meta'] as $meta) {
 			if (strpos($meta['key'], 'dak_event_') === 0) {
-	            $key = substr($meta['key'], strlen('dak_event_'));
+				$key = substr($meta['key'], strlen('dak_event_'));
+				$remapped['dak_event'][$key] = $meta['value'];
 			}
-            $remapped[$key] = $meta['value'];
-        }
+		}
 
-        return $remapped;
-        //return $eventObject;
-    }
+		return $remapped;
+		//return $eventObject;
+	}
 
 	/**
 	 * @override
@@ -84,7 +84,7 @@ class DakEvent_API_Event extends WP_JSON_CustomPostType {
 				continue;
 
 			$custom_fields[] = array(
-				'id'    => $meta['meta_id'],
+				'id'	=> $meta['meta_id'],
 				'key'   => $meta['meta_key'],
 				'value' => $meta['meta_value'],
 			);
