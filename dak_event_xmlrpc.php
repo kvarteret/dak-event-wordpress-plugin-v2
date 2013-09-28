@@ -113,6 +113,9 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
 
         $meta_data_array['dak_event_provider'] = $provider;
 
+        $meta_data_array['dak_event_start_datetime'] = $meta_data_array['dak_event_start_date'] . ' ' . $meta_data_array['dak_event_start_time'];
+        $meta_data_array['dak_event_end_datetime'] = $meta_data_array['dak_event_end_date'] . ' ' . $meta_data_array['dak_event_end_time'];
+
         #Dak event meta-fields, remember that we need to prepend our namespace
         # for each key we use from the source
 

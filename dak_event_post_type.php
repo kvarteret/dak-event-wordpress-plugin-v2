@@ -29,6 +29,9 @@ $dak_event_storage_fields = array(
 	"dak_event_end_date" => dak_event_make_field(),
 	"dak_event_end_time" => dak_event_make_field(),
 
+	"dak_event_start_datetime" => dak_event_make_field(),
+	"dak_event_end_datetime" => dak_event_make_field(),
+
 	"dak_event_custom_location" => dak_event_make_field(),
 	"dak_event_common_location_id" => dak_event_make_field("int"),
 	"dak_event_common_location_name" => dak_event_make_field(),
