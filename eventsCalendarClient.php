@@ -402,7 +402,7 @@ class eventsCalendarClient extends calendarClient {
 			"dak_event_arranger_description" => "arranger_description",
 
 			"dak_event_primaryPicture_url" => "primary_picture_url",
-			"dak_event_primaryPicture_desc" => "primary_picture_desc",
+			"dak_event_primaryPicture_description" => "primary_picture_description",
 
 			"dak_event_covercharge" => "covercharge",
 			"dak_event_age_limit" => "age_limit",
