@@ -136,11 +136,17 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
         if (!empty($meta_data_array['dak_event_primary_picture_url'])) {
             error_log("Will insert picture");
 
+            $description = null;
+            if (!empty($meta_data_array['dak_event_primary_picture_description']) {
+                $description = $meta_data_array['dak_event_primary_picture_description'];
+            } else {
+                $description = $meta_data_array['dak_event_title'];
+            }
+
             $attachment_id = dak_event_get_image(
                 $meta_data_array['dak_event_primary_picture_url'],
-                (!empty($meta_data_array['dak_event_primary_picture_description']) ? $meta_data_array['dak_event_primary_picture_description'] : null)
+                $description
             );
-
 
             if (is_wp_error($attachment_id)) {
                 error_log($attachment_id->get_error_message());
