@@ -137,7 +137,7 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
             error_log("Will insert picture");
 
             $description = null;
-            if (!empty($meta_data_array['dak_event_primary_picture_description']) {
+            if (!empty($meta_data_array['dak_event_primary_picture_description'])) {
                 $description = $meta_data_array['dak_event_primary_picture_description'];
             } else {
                 $description = $meta_data_array['dak_event_title'];
