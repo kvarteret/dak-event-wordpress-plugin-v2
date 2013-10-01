@@ -137,6 +137,8 @@ function dak_event_get_image($image_url, $desc = null, $max_image_size=0) {
  * @return id|WP_Error id on success
  */
 function dak_media_sideload_image($file, $post_id, $desc = null, $max_image_size = 0) {
+	global $post_type_namespace;
+
 	if ($max_image_size <= 0) {
 		$max_image_size = DAK_MAX_IMAGE_SIZE;
 	}
@@ -161,7 +163,7 @@ function dak_media_sideload_image($file, $post_id, $desc = null, $max_image_size
 		// Set variables for storage
 		// fix file filename for query strings
 		preg_match( '/[^\?]+\.(jpe?g|jpe|gif|png)\b/i', $file, $matches );
-		$file_array['name'] = basename($matches[0]);
+		$file_array['name'] = $post_type_namespace . '-' . basename($matches[0]);
 		$file_array['tmp_name'] = $tmp;
 
 		// If error storing temporarily, unlink
