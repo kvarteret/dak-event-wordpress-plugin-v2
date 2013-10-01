@@ -158,6 +158,7 @@ class linticketCalendarClient extends calendarClient {
 			$metaData['dak_event_covercharge'] = "";
 		}
 
+		$metaData['dak_event_ical'] = str_replace("json", "ical", $metaData['dak_event_url']);
 
 		return $metaData;
 	}
