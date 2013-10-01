@@ -136,7 +136,7 @@ function dak_event_add_metaboxes() {
 	global $dak_event_storage_fields;
 
 	foreach ($dak_event_storage_fields as $field_name => $field_data) {
-		if ($editor_callback == null) {
+		if ($field_data['editor_callback'] == null) {
 			continue;
 		}
 
