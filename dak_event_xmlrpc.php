@@ -81,7 +81,7 @@ function dak_event_updateEvent($id, $provider, $payload = null) {
     $client = new $class($apiUrl);
 
     if (empty($eventData)) {
-        $response = $client->event($id);
+        $eventData = $client->event($id);
     }
     $post_to_insert = array();
 
