@@ -47,18 +47,18 @@ function dak_event_deactivate() {
 }
 register_deactivation_hook(__FILE__, 'dak_event_deactivate');
 
-function dak_event_api_init() {
+function dak_event_api_init($server) {
 	global $dakevent_api_event;
 
 	// TODO: Check if WP-API is activated, if not install github.com/rmccure/WP-API
 	if (class_exists("WP_JSON_CustomPostType")) {
 		require_once (__DIR__ . '/api/DakEvent_API_Event.php');
-		$dakevent_api_event = new DakEvent_API_Event();
+		$dakevent_api_event = new DakEvent_API_Event($server);
 	} else {
 		add_action('admin_notices', 'dak_event_missing_requirement');
 	}
 }
-add_action( 'plugins_loaded', 'dak_event_api_init' );
+add_action( 'wp_json_server_before_serve', 'dak_event_api_init' );
 
 function dak_event_missing_requirement() {
 	echo "<div class=\"error\">";
